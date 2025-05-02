@@ -1,25 +1,111 @@
+Item Ranking\elo-item-ranker\index.html
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-62M3BHQ85H"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+
+    gtag('config', 'G-62M3BHQ85H');
+  </script>
+
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Elo Item Rater</title>
-  <meta name="description" content="Elo Item Rater" />
-  <meta name="author" content="Sherlemious" />
+  <title>ELO Item Ranker - Compare and Rank Items with ELO Algorithm | Decision Making Tool</title>
+  <meta name="description"
+    content="Free online ELO ranking system to compare and rank items through simple pairwise comparisons. Perfect for decision making, preference sorting, tier lists, and prioritization. Save results, export to CSV, and visualize rankings." />
+  <meta name="author" content="Abdulrahman Mohammed (sherlemious)" />
+  <meta name="keywords"
+    content="ELO ranking, pairwise comparison, decision making, item ranking, tier lists, preference sorting, elo algorithm, ranking tool, priority setting, choice selection, A/B comparison, decision support, item sorter, ranking system, elo rating calculator, comparison matrix, tournament bracket, decision framework, ranking website, top-choice finder" />
 
-  <meta property="og:title" content="Elo Item Rater" />
-  <meta property="og:description" content="Elo Item Rater by Sherlemious" />
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="/icon.png" />
+  <link rel="apple-touch-icon" href="/icon.png" />
+  <link rel="shortcut icon" href="/icon.png" />
+
+  <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://elo-item-ranker.vercel.app/" />
+  <meta property="og:title" content="ELO Item Ranker - Compare and Rank Items Easily" />
+  <meta property="og:description"
+    content="Create rankings through simple A vs B comparisons using the ELO rating system. Export results, view tier lists, and make better decisions." />
+  <meta property="og:image" content="https://elo-item-ranker.vercel.app/og-image.png" />
+  <meta property="og:site_name" content="ELO Item Ranker" />
+  <meta property="og:locale" content="en_US" />
 
-  <meta property="og:title" content="Elo Item Rater" />
-  <meta property="og:description" content="Elo Item Rater by Sherlemious" />
-
+  <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:url" content="https://elo-item-ranker.vercel.app/" />
+  <meta name="twitter:title" content="ELO Item Ranker - Compare and Rank Items Easily" />
+  <meta name="twitter:description"
+    content="Create rankings through simple A vs B comparisons using the ELO rating system. Export results, view tier lists, and make better decisions." />
+  <meta name="twitter:image" content="https://elo-item-ranker.vercel.app/og-image.png" />
+  <meta name="twitter:creator" content="@sherlemious" />
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://elo-item-ranker.vercel.app/" />
+
+  <!-- Color Theme -->
+  <meta name="theme-color" content="#3b82f6" />
+
+  <!-- Mobile App capability -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="ELO Ranker" />
+  <meta name="application-name" content="ELO Item Ranker" />
+  <meta name="format-detection" content="telephone=no" />
+  <meta name="mobile-web-app-capable" content="yes" />
+
+  <!-- SEO verification -->
+  <meta name="google-site-verification" content="your-verification-code" />
+  <meta name="msvalidate.01" content="your-verification-code" />
+  <meta name="yandex-verification" content="your-verification-code" />
+
+  <!-- Additional SEO -->
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+  <meta name="revisit-after" content="7 days" />
+  <meta name="rating" content="General" />
+  <meta name="language" content="English" />
+  <meta name="classification" content="Decision Making Tool, Ranking System" />
+  <meta name="distribution" content="Global" />
+  <meta name="subject" content="ELO Rating System for Item Ranking" />
+
+  <!-- Schema.org markup for Google -->
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "ELO Item Ranker",
+      "url": "https://elo-item-ranker.vercel.app/",
+      "description": "A web application for ranking items using the ELO rating system through pairwise comparisons.",
+      "applicationCategory": "UtilityApplication",
+      "operatingSystem": "Web",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "author": {
+        "@type": "Person",
+        "name": "Abdulrahman Mohammed",
+        "url": "https://www.sherlemious.com"
+      },
+      "featureList": "Multiple input methods, ELO rating system, tier lists, CSV export, comparison history"
+    }
+  </script>
+
+  <!-- Preconnect to required origins -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 </head>
 
 <body>
   <div id="root"></div>
+  <noscript>You need to enable JavaScript to run this application.</noscript>
   <script type="module" src="/src/main.tsx"></script>
 </body>
 
