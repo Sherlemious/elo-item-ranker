@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 // Define types
@@ -75,9 +74,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       // Check system preference for theme
       if (!localStorage.getItem('theme-preference')) {
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        setState(prev => ({
+        setState((prev) => ({
           ...prev,
-          currentTheme: prefersDark ? 'dark' : 'default'
+          currentTheme: prefersDark ? 'dark' : 'default',
         }));
       }
     } catch (error) {
@@ -98,13 +97,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   useEffect(() => {
     const root = document.documentElement;
     root.classList.remove('dark', 'purple-theme', 'amber-theme', 'rose-theme');
-    
+
     if (state.currentTheme === 'dark') {
       root.classList.add('dark');
     } else if (state.currentTheme !== 'default') {
       root.classList.add(`${state.currentTheme}-theme`);
     }
-    
+
     localStorage.setItem('theme-preference', state.currentTheme);
   }, [state.currentTheme]);
 
@@ -117,9 +116,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     if (!trimmedName) return;
 
     // Check for duplicates (case insensitive)
-    const isDuplicate = state.items.some(
-      item => item.name.toLowerCase() === trimmedName.toLowerCase()
-    );
+    const isDuplicate = state.items.some((item) => item.name.toLowerCase() === trimmedName.toLowerCase());
 
     if (!isDuplicate) {
       const newItem: Item = {
@@ -131,9 +128,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         comparisons: 0,
       };
 
-      setState(prev => ({
+      setState((prev) => ({
         ...prev,
-        items: [...prev.items, newItem]
+        items: [...prev.items, newItem],
       }));
     }
   };
@@ -144,13 +141,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const newItems: Item[] = [];
 
     // Process each name
-    names.forEach(name => {
+    names.forEach((name) => {
       const trimmedName = name.trim();
       if (!trimmedName) return;
 
       // Check for duplicates (case insensitive)
       const isDuplicate = [...state.items, ...newItems].some(
-        item => item.name.toLowerCase() === trimmedName.toLowerCase()
+        (item) => item.name.toLowerCase() === trimmedName.toLowerCase()
       );
 
       if (isDuplicate) {
@@ -169,9 +166,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     });
 
     if (newItems.length > 0) {
-      setState(prev => ({
+      setState((prev) => ({
         ...prev,
-        items: [...prev.items, ...newItems]
+        items: [...prev.items, ...newItems],
       }));
     }
 
@@ -180,24 +177,24 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   // Remove an item
   const removeItem = (id: string) => {
-    setState(prev => ({
+    setState((prev) => ({
       ...prev,
-      items: prev.items.filter(item => item.id !== id)
+      items: prev.items.filter((item) => item.id !== id),
     }));
   };
 
   // Clear all items
   const clearAllItems = () => {
-    setState(prev => ({
+    setState((prev) => ({
       ...prev,
       items: [],
-      comparisons: []
+      comparisons: [],
     }));
   };
 
   // Start comparison phase
   const startComparison = () => {
-    setState(prev => ({ ...prev, currentPhase: 'comparison' }));
+    setState((prev) => ({ ...prev, currentPhase: 'comparison' }));
     chooseNextPair();
   };
 
@@ -214,10 +211,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     for (let i = 0; i < items.length; i++) {
       for (let j = i + 1; j < items.length; j++) {
         const pairKey = `${items[i].id}-${items[j].id}`;
-        const reversePairKey = `${items[j].id}-${items[i].id}`;
         comparisonCounts[pairKey] = 0;
-        
-        state.comparisons.forEach(comp => {
+
+        state.comparisons.forEach((comp) => {
           if (
             (comp.item1Id === items[i].id && comp.item2Id === items[j].id) ||
             (comp.item1Id === items[j].id && comp.item2Id === items[i].id)
@@ -234,10 +230,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
     for (let i = 0; i < items.length; i++) {
       for (let j = i + 1; j < items.length; j++) {
-        const pairKey = `${items[i].id}-${items[j].id}`;
-        if (comparisonCounts[pairKey] < minComparisons) {
-          minComparisons = comparisonCounts[pairKey];
-          leastComparedPair = [i, j];
+        // Ensure i !== j to avoid comparing an item with itself
+        if (i !== j) {
+          const pairKey = `${items[i].id}-${items[j].id}`;
+          if (comparisonCounts[pairKey] < minComparisons) {
+            minComparisons = comparisonCounts[pairKey];
+            leastComparedPair = [i, j];
+          }
         }
       }
     }
@@ -261,61 +260,61 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const calculateElo = (winnerRating: number, loserRating: number): [number, number] => {
     const expectedWinner = 1 / (1 + Math.pow(10, (loserRating - winnerRating) / 400));
     const expectedLoser = 1 / (1 + Math.pow(10, (winnerRating - loserRating) / 400));
-    
+
     const newWinnerRating = winnerRating + K_FACTOR * (1 - expectedWinner);
     const newLoserRating = loserRating + K_FACTOR * (0 - expectedLoser);
-    
+
     return [newWinnerRating, newLoserRating];
   };
 
   // Record a comparison result
   const recordComparison = (winnerIdx: 0 | 1) => {
     if (!currentPairIndices) return;
-    
+
     const [idx1, idx2] = currentPairIndices;
     const winner = state.items[winnerIdx === 0 ? idx1 : idx2];
     const loser = state.items[winnerIdx === 0 ? idx2 : idx1];
-    
+
     // Create comparison record
     const comparison: Comparison = {
       id: generateId(),
       item1Id: state.items[idx1].id,
       item2Id: state.items[idx2].id,
       winnerId: winner.id,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     };
-    
+
     // Update ELO ratings
     const [newWinnerRating, newLoserRating] = calculateElo(winner.rating, loser.rating);
-    
+
     // Update state with new comparison and updated ratings
-    setState(prev => {
-      const updatedItems = prev.items.map(item => {
+    setState((prev) => {
+      const updatedItems = prev.items.map((item) => {
         if (item.id === winner.id) {
           return {
             ...item,
             rating: newWinnerRating,
             wins: item.wins + 1,
-            comparisons: item.comparisons + 1
+            comparisons: item.comparisons + 1,
           };
         } else if (item.id === loser.id) {
           return {
             ...item,
             rating: newLoserRating,
             losses: item.losses + 1,
-            comparisons: item.comparisons + 1
+            comparisons: item.comparisons + 1,
           };
         }
         return item;
       });
-      
+
       return {
         ...prev,
         items: updatedItems,
-        comparisons: [...prev.comparisons, comparison]
+        comparisons: [...prev.comparisons, comparison],
       };
     });
-    
+
     // Choose next pair
     chooseNextPair();
   };
@@ -324,31 +323,31 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const getProgress = () => {
     const itemCount = state.items.length;
     // n(n-1)/2 is the formula for the number of possible pairs
-    const totalPossiblePairs = itemCount * (itemCount - 1) / 2;
-    
+    const totalPossiblePairs = (itemCount * (itemCount - 1)) / 2;
+
     // Recommended comparisons is at least 1.5x the number of items
     const recommendedComparisons = Math.max(Math.ceil(itemCount * 1.5), totalPossiblePairs);
-    
+
     return {
       current: state.comparisons.length,
       recommended: recommendedComparisons,
-      total: totalPossiblePairs
+      total: totalPossiblePairs,
     };
   };
 
   // Show results
   const showResults = () => {
-    setState(prev => ({ ...prev, currentPhase: 'results' }));
+    setState((prev) => ({ ...prev, currentPhase: 'results' }));
   };
 
   // Reset to input phase
   const resetToInput = () => {
-    setState(prev => ({ ...prev, currentPhase: 'input' }));
+    setState((prev) => ({ ...prev, currentPhase: 'input' }));
   };
 
   // Set theme
   const setTheme = (theme: AppState['currentTheme']) => {
-    setState(prev => ({ ...prev, currentTheme: theme }));
+    setState((prev) => ({ ...prev, currentTheme: theme }));
   };
 
   const contextValue: AppContextType = {
@@ -366,11 +365,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setTheme,
   };
 
-  return (
-    <AppContext.Provider value={contextValue}>
-      {children}
-    </AppContext.Provider>
-  );
+  return <AppContext.Provider value={contextValue}>{children}</AppContext.Provider>;
 };
 
 // Custom hook to use the context
