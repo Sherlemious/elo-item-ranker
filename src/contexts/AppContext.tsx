@@ -61,6 +61,7 @@ const DEFAULT_RATING = 1200;
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [state, setState] = useState<AppState>(initialState);
   const [currentPairIndices, setCurrentPairIndices] = useState<[number, number] | null>(null);
+  const [previousPair, setPreviousPair] = useState<Set<string> | null>(null); // Track previous pair IDs
 
   // Load from localStorage on initial render
   useEffect(() => {
@@ -206,47 +207,46 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       return;
     }
 
-    // Create a map of comparison counts for each pair
-    const comparisonCounts: Record<string, number> = {};
-    for (let i = 0; i < items.length; i++) {
-      for (let j = i + 1; j < items.length; j++) {
-        const pairKey = `${items[i].id}-${items[j].id}`;
-        comparisonCounts[pairKey] = 0;
-
-        state.comparisons.forEach((comp) => {
-          if (
-            (comp.item1Id === items[i].id && comp.item2Id === items[j].id) ||
-            (comp.item1Id === items[j].id && comp.item2Id === items[i].id)
-          ) {
-            comparisonCounts[pairKey]++;
-          }
-        });
+    // Sort items by comparison count (ascending), then rating (descending)
+    const sortedItems = [...items].sort((a, b) => {
+      if (a.comparisons === b.comparisons) {
+        return b.rating - a.rating;
       }
-    }
+      return a.comparisons - b.comparisons;
+    });
 
-    // Find the pair with the least comparisons
-    let leastComparedPair: [number, number] | null = null;
-    let minComparisons = Infinity;
+    let selectedPair: [number, number] | null = null;
+    const previousPairSet = previousPair || new Set<string>();
 
-    for (let i = 0; i < items.length; i++) {
-      for (let j = i + 1; j < items.length; j++) {
-        // Ensure i !== j to avoid comparing an item with itself
-        if (i !== j) {
-          const pairKey = `${items[i].id}-${items[j].id}`;
-          if (comparisonCounts[pairKey] < minComparisons) {
-            minComparisons = comparisonCounts[pairKey];
-            leastComparedPair = [i, j];
-          }
+    // Try to find a pair that isn't the previous one
+    for (let i = 0; i < sortedItems.length - 1; i++) {
+      for (let j = i + 1; j < sortedItems.length; j++) {
+        const currentPairSet = new Set([sortedItems[i].id, sortedItems[j].id]);
+        // Check if this pair matches the previous pair (order-independent)
+        const isSameAsPrevious =
+          previousPairSet.size === currentPairSet.size && [...previousPairSet].every((id) => currentPairSet.has(id));
+
+        if (!isSameAsPrevious) {
+          selectedPair = [items.indexOf(sortedItems[i]), items.indexOf(sortedItems[j])];
+          break;
         }
       }
+      if (selectedPair) break;
+    }
+
+    // Fallback to the least compared pair if no other valid pair is found
+    if (!selectedPair) {
+      selectedPair = [items.indexOf(sortedItems[0]), items.indexOf(sortedItems[1])];
     }
 
     // Randomly shuffle the order of the pair
-    if (leastComparedPair && Math.random() > 0.5) {
-      leastComparedPair = [leastComparedPair[1], leastComparedPair[0]];
+    if (Math.random() > 0.5) {
+      [selectedPair[0], selectedPair[1]] = [selectedPair[1], selectedPair[0]];
     }
 
-    setCurrentPairIndices(leastComparedPair);
+    // Update current pair and previous pair
+    setCurrentPairIndices(selectedPair);
+    setPreviousPair(new Set([items[selectedPair[0]].id, items[selectedPair[1]].id]));
   };
 
   // Get current pair of items to compare
